@@ -28,7 +28,7 @@ def style_background_dashboard():
     st.markdown("""
         <style>
                 .stApp{
-                    background: #BDE8F5 !important;
+                    background: #E0E3FF !important;
                 
                 }
                 
@@ -63,7 +63,7 @@ def style_base_layout():
 
             h2{
                 font-family: "Climate Crisis", sans-serif !important;
-                font-size: 2rem !important;
+                font-size: 1.7rem !important;
                 line-height: 1.1 !important;
                 margin-bottom: 0rem !important;
                 }
@@ -83,7 +83,7 @@ def style_base_layout():
                 
             button[kind="secondary"]{
                 border-radius: 1.5rem !important;
-                background: #408A71 !important;
+                background: #424874 !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
