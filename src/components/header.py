@@ -3,7 +3,7 @@ import streamlit as st
 def header_home():
     
     import base64
-    with open("public/fusionclass_logo.png", "rb") as image_file:
+    with open("public/fusionclass_logo-removebg.png", "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode()
     
     st.markdown(
@@ -18,7 +18,7 @@ def header_home():
 
 def header_dashboard():
     import base64
-    with open("public/fusionclass_logo.png", "rb") as image_file:
+    with open("public/fusionclass_logo-removebg-2.png", "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode()
         
     st.markdown(
