@@ -46,10 +46,10 @@ def style_base_layout():
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
         /* Hide top bar of streamlit */
-            #MainMenu, footer, header{
-                visibility: hidden;
-            }
-                
+            # #MainMenu, footer, header{
+            #     visibility: hidden;
+            # }
+            
             .block-container{
                 padding-top:1.5rem !important;
             }
@@ -74,7 +74,7 @@ def style_base_layout():
                 
             button{
                 border-radius: 1.5rem !important;
-                background: #0c2c54 !important;
+                background-color: #0c2c54 !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
@@ -83,7 +83,7 @@ def style_base_layout():
                 
             button[kind="secondary"]{
                 border-radius: 1.5rem !important;
-                background: #424874 !important;
+                background-color: #424874 !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
@@ -92,7 +92,7 @@ def style_base_layout():
 
             button[kind="tertiary"]{
                 border-radius: 1.5rem !important;
-                background: black !important;
+                background-color: black !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
