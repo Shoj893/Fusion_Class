@@ -6,7 +6,7 @@ from src.components.subject_card import subject_card
 from src.database.db import check_teacher_exists, create_teacher, teacher_login, get_teacher_subjects
 from src.components.dialog_create_subject import create_subject_dialog
 from src.components.dialog_share_subject import share_subject_dialog
-
+from src.components.dialog_add_photo import add_photos_dialog
 
 def teacher_screen():
 
@@ -23,6 +23,7 @@ def teacher_screen():
 
 
 def teacher_dashboard():
+
     teacher_data = st.session_state.teacher_data
     c1, c2 = st.columns(2, vertical_alignment="center", gap="xxlarge")
     with c1:
@@ -70,10 +71,40 @@ def teacher_dashboard():
 
     footer_dashboard()
    
+
 def teacher_tab_take_attendance():
+
+    teacher_id = st.session_state.teacher_data["teacher_id"]
     st.header("Take AI Attendance")
 
+    if "attendance_images" not in st.session_state:
+        st.session_state.attendance_images = []
+
+    subjects = get_teacher_subjects(teacher_id)
+
+    if not subjects:
+        st.warning("You haven't created any subject yet! Please create one to begin!")
+        return
+    
+    subject_options = {f"{s["name"]} - {s["subject_code"]}": s["subject_id"] for s in subjects}
+
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+        selected_subject_label = st.selectbox("Select Subject", options=list(subject_options.keys()))
+
+    with col2:
+        if st.button("Add Photos", type="primary", icon=":material/photo_prints:", width="stretch"):
+            add_photos_dialog()
+
+    selected_subject_id = subject_options[selected_subject_label]
+
+    st.divider()
+
+    
+
 def teacher_tab_manage_subjects():
+
     teacher_id = st.session_state.teacher_data["teacher_id"]
     col1, col2 = st.columns(2)
     with col1:
@@ -88,7 +119,7 @@ def teacher_tab_manage_subjects():
     if subjects:
         for sub in subjects:
             stats = [
-                ("🫂", "Studemts", sub["total_students"]),
+                ("🫂", "Students", sub["total_students"]),
                 ("🕰️", "Classes", sub["total_classes"])
             ]
         def share_btn():
