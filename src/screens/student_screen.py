@@ -66,7 +66,7 @@ def student_dashboard():
 
         stats = stats_map.get(sid,{"total":0, "attended": 0} )
         def unenroll_button():
-                if st.button("Unenroll from tihs course", type='tertiary', width='stretch', icon=':material/delete_forever:'):
+                if st.button("Unenroll from this course", type='tertiary', width='stretch', icon=':material/delete_forever:'):
                     unenroll_student_to_subject(student_id, sid)
                     st.toast(f'Unenrolled from {sub['name']} successfully!')
                     st.rerun()
@@ -103,13 +103,14 @@ def student_screen():
             st.session_state["login_type"] = None
             st.rerun()
 
-    st.header("Login using Face ID", text_alignment="center")
+    st.markdown('<h2 style="text-align: center; color: white; font-size: 1.4rem; font-weight: bold;">Login using Face ID</h2>', unsafe_allow_html=True)
 
     st.space()
     st.space()
     
     show_registration = False
     photo_source = st.camera_input("Position your face in the center")
+    st.markdown('<div style="margin-bottom: 20px;"></div>', unsafe_allow_html=True)
 
     if photo_source:
         img = np.array(Image.open(photo_source))
