@@ -29,6 +29,50 @@ def student_dashboard():
 
     st.space()
 
+    # Show registration completion for new users
+    if 'is_new_user' in st.session_state and st.session_state.is_new_user:
+        with st.container(border=True):
+            st.success("🎉 Welcome to FusionClass!")
+            st.write("Complete your profile to get the most out of your attendance system.")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Complete Voice Registration", type="secondary", width="stretch"):
+                    st.subheader("Voice Registration")
+                    st.write("Please record your voice for attendance verification")
+                    
+                    audio_data = None
+                    try:
+                        audio_data = st.audio_input("Record a short phrase like 'I am present, My name is [your name]'")
+                    except Exception:
+                        st.error("Audio recording failed!")
+                    
+                    if audio_data:
+                        with st.spinner("Processing voice..."):
+                            voice_emb = get_voice_embedding(audio_data.read())
+                            
+                            if voice_emb:
+                                # Update student record with voice embedding
+                                student_id = st.session_state.student_data['student_id']
+                                from src.database.config import supabase
+                                supabase.table("students").update({"voice_embedding": voice_emb}).eq("student_id", student_id).execute()
+                                
+                                # Update session state
+                                st.session_state.student_data['voice_embedding'] = voice_emb
+                                st.session_state.is_new_user = False
+                                
+                                st.success("Voice registration completed successfully!")
+                                time.sleep(2)
+                                st.rerun()
+                            else:
+                                st.error("Failed to process voice. Please try again.")
+            with col2:
+                if st.button("Skip for Now", type="tertiary", width="stretch"):
+                    st.session_state.is_new_user = False
+                    st.rerun()
+        
+        st.divider()
+
     c1, c2 =st.columns(2)
     with c1:
         st.header('Your Enrolled Subjects')
@@ -176,6 +220,7 @@ def student_screen():
                                 st.session_state.is_logged_in = True
                                 st.session_state.user_role = "student"
                                 st.session_state.student_data = response_data[0]
+                                st.session_state.is_new_user = True
                                 st.toast(f"Profile Created! Hi {new_name}")
                                 time.sleep(1)
                                 st.rerun()
