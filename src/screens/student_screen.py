@@ -29,49 +29,46 @@ def student_dashboard():
 
     st.space()
 
-    # Show registration completion for new users
-    if 'is_new_user' in st.session_state and st.session_state.is_new_user:
-        with st.container(border=True):
-            st.success("🎉 Welcome to FusionClass!")
-            st.write("Complete your profile to get the most out of your attendance system.")
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("Complete Voice Registration", type="secondary", width="stretch"):
-                    st.subheader("Voice Registration")
-                    st.write("Please record your voice for attendance verification")
-                    
-                    audio_data = None
-                    try:
-                        audio_data = st.audio_input("Record a short phrase like 'I am present, My name is [your name]'")
-                    except Exception:
-                        st.error("Audio recording failed!")
-                    
+    # Show voice registration option when the logged-in student has no voice profile on student dashboard.
+    if not student_data.get("voice_embedding"):
+        if st.button("Add Voice Recognition", type="secondary", width="stretch", icon=":material/mic:"):
+            st.session_state.show_voice_registration = True
+
+        if st.session_state.get("show_voice_registration"):
+            with st.container(border=True):
+                st.subheader("Voice Registration")
+                st.write("Record your voice for voice attendance verification.")
+
+                audio_data = None
+                try:
+                    audio_data = st.audio_input(
+                        "Record a short phrase like I am present, My name is Shobhit.",
+                        key="dashboard_voice_registration"
+                    )
+                except Exception:
+                    st.error("Audio recording failed!")
+
+                if st.button("Save Voice", type="primary", width="stretch"):
                     if audio_data:
                         with st.spinner("Processing voice..."):
                             voice_emb = get_voice_embedding(audio_data.read())
-                            
+
                             if voice_emb:
-                                # Update student record with voice embedding
-                                student_id = st.session_state.student_data['student_id']
                                 from src.database.config import supabase
                                 supabase.table("students").update({"voice_embedding": voice_emb}).eq("student_id", student_id).execute()
-                                
-                                # Update session state
-                                st.session_state.student_data['voice_embedding'] = voice_emb
-                                st.session_state.is_new_user = False
-                                
-                                st.success("Voice registration completed successfully!")
-                                time.sleep(2)
+
+                                st.session_state.student_data["voice_embedding"] = voice_emb
+                                st.session_state.show_voice_registration = False
+                                st.success("Voice recognition added successfully!")
+                                time.sleep(1)
                                 st.rerun()
                             else:
                                 st.error("Failed to process voice. Please try again.")
-            with col2:
-                if st.button("Skip for Now", type="tertiary", width="stretch"):
-                    st.session_state.is_new_user = False
-                    st.rerun()
-        
+                    else:
+                        st.warning("Please record your voice before saving.")
+
         st.divider()
+
 
     c1, c2 =st.columns(2)
     with c1:
@@ -212,6 +209,8 @@ def student_screen():
                             voice_emb = None
                             if audio_data:
                                 voice_emb = get_voice_embedding(audio_data.read())
+                                if voice_emb is not None:
+                                    voice_emb = voice_emb.tolist() if hasattr(voice_emb, 'tolist') else voice_emb
 
                             response_data = create_student(new_name, face_embedding=face_emb, voice_embedding=voice_emb)
 
@@ -232,4 +231,3 @@ def student_screen():
 
                     
     footer_dashboard()
-

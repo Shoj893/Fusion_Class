@@ -102,6 +102,14 @@ def style_base_layout():
             button:hover{
                 transform: scale(1.05) !important;
                 }
+
+            div[data-testid="stDialog"] button[aria-label="Close"]::before{
+                content: "×";
+                color: white;
+                font-size: 1.5rem;
+                font-weight: 700;
+                line-height: 1;
+                }
                 
         </style>
                 

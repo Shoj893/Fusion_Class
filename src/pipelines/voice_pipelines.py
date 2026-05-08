@@ -7,19 +7,26 @@ import streamlit as st
 
 @st.cache_resource
 def load_voice_encoder():
-    return VoiceEncoder
+    return VoiceEncoder()
 
 def get_voice_embedding(audio_bytes):
+    if not audio_bytes:
+        st.error("No voice recording found. Please record your voice and try again.")
+        return None
+
     try:
         encoder = load_voice_encoder()
 
         audio, sr = librosa.load(io.BytesIO(audio_bytes), sr=16000)
+        if audio.size == 0:
+            st.error("Voice recording is empty. Please record your voice and try again.")
+            return None
+
         wav = preprocess_wav(audio)
         embedding = encoder.embed_utterance(wav)
         return embedding.tolist()
-    
     except Exception as e:
-        st.error("Voice recognition error")
+        st.error(f"Voice recognition error: {e}")
         return None
     
 def identify_speaker(new_embedding, candidates_dict, threshold = 0.65):
@@ -30,8 +37,8 @@ def identify_speaker(new_embedding, candidates_dict, threshold = 0.65):
     best_score = -1.0
 
     for sid, stored_embedding in candidates_dict.items():
-        if stored_embedding():
-            similarity = np.dot(new_embedding, stored_embedding)
+        if stored_embedding:
+            similarity = np.dot(np.asarray(new_embedding), np.asarray(stored_embedding))
 
             if similarity > best_score:
                 best_score = similarity

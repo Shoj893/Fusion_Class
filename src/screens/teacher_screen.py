@@ -5,6 +5,7 @@ from src.components.footer import footer_dashboard
 from src.components.subject_card import subject_card
 from src.database.db import check_teacher_exists, create_teacher, teacher_login, get_teacher_subjects, get_attendance_for_teacher
 from src.components.dialog_create_subject import create_subject_dialog
+from src.components.dialog_edit_subject import edit_subject_dialog
 from src.components.dialog_share_subject import share_subject_dialog
 from src.components.dialog_add_photo import add_photos_dialog
 from src.components.dialog_attendance_results import attendance_result_dialog
@@ -195,18 +196,28 @@ def teacher_tab_manage_subjects():
                 ("🫂", "Students", sub["total_students"]),
                 ("🕰️", "Classes", sub["total_classes"])
             ]
-        def share_btn():
-            if st.button(f"Share Code: {sub["name"]}", key=f"share_{sub["subject_code"]}", icon=":material/share:"):
-                share_subject_dialog(sub["name"], sub["subject_code"])
-            st.space()
 
-        subject_card(
-            name = sub["name"],
-            code = sub["subject_code"],
-            section = sub["section"],
-            stats = stats,
-            footer_callback = share_btn
-        )
+            # Add subject card actions for editing details and sharing enrollment code.
+            def subject_actions(subject=sub):
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    if st.button("Edit Subject", key=f"edit_{subject['subject_id']}", icon=":material/edit:", width="stretch"):
+                        edit_subject_dialog(subject)
+
+                with col2:
+                    if st.button(f"Share Code: {subject['name']}", key=f"share_{subject['subject_code']}", icon=":material/share:", width="stretch"):
+                        share_subject_dialog(subject["name"], subject["subject_code"])
+
+                st.space()
+
+            subject_card(
+                name = sub["name"],
+                code = sub["subject_code"],
+                section = sub["section"],
+                stats = stats,
+                footer_callback = subject_actions
+            )
     else:
         st.info("NO SUBJECT FOUND, CREATE ONE ABOVE")
             
