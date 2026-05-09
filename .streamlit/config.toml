@@ -1,0 +1,8 @@
+# Force Streamlit to use a light theme on every device and browser.
+[theme]
+base = "light"
+primaryColor = "#0c2c54"
+backgroundColor = "#E0E3FF"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#0f172a"
+font = "sans serif"

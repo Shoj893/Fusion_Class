@@ -68,8 +68,25 @@ def style_base_layout():
                 margin-bottom: 0rem !important;
                 }
 
-             h3, h4, p{
+            h3, h4, p{
                 font-family: "Outfit", sans-serif;
+            }
+
+            /* Keep form fields white even when a visitor's browser uses dark mode. */
+            div[data-testid="stTextInput"] input,
+            div[data-testid="stTextArea"] textarea,
+            div[data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+            div[data-baseweb="input"],
+            div[data-baseweb="textarea"]{
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                border-color: #94a3b8 !important;
+            }
+
+            div[data-testid="stTextInput"] input::placeholder,
+            div[data-testid="stTextArea"] textarea::placeholder{
+                color: #64748b !important;
+                opacity: 1 !important;
             }
                 
             button{
