@@ -267,7 +267,12 @@ def login_teacher(username, password):
     if not username or not password:
         return False
     
-    teacher = teacher_login(username, password)
+    # Codex change: prevent Supabase connection errors from crashing the app.
+    try:
+        teacher = teacher_login(username, password)
+    except Exception:
+        st.error("Unable to connect to database. Please check Supabase configuration or try again later.")
+        return False
 
     if teacher:
         st.session_state.user_role = "teacher"
@@ -320,16 +325,17 @@ def teacher_screen_login():
 def register_teacher(teacher_username, teacher_name, teacher_pass, teacher_pass_confirm):
     if not teacher_username or not teacher_name or not teacher_pass:
         return False, "All fields are required!"
-    if check_teacher_exists(teacher_username):
-        return False, "Username already taken"
     if teacher_pass != teacher_pass_confirm:
         return False, "Password doesn't match"
 
+    # Codex change: keep teacher registration from crashing on database connection errors.
     try:
+        if check_teacher_exists(teacher_username):
+            return False, "Username already taken"
         create_teacher(teacher_username, teacher_pass, teacher_name)
         return True, "Sucessfully Created! Login Now"
-    except Exception as e:
-        return False, "Unexpected Error!"
+    except Exception:
+        return False, "Unable to connect to database. Please check Supabase configuration or try again later."
 
 def teacher_screen_register():
     c1, c2 = st.columns(2, vertical_alignment="center", gap="xxlarge")
